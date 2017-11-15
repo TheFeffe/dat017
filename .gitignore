@@ -2,3 +2,4 @@
 *.elf
 *.lst
 *.s19
+.atom-dbg.cson
