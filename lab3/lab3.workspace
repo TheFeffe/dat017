@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="lab3" Database="" Version="10.0.0">
+  <Project Name="lab3" Path="lab3.project" Active="Yes"/>
+  <Project Name="graphicdisplay" Path="graphicdisplay/graphicdisplay.project"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="lab3" ConfigName="Debug"/>
+      <Project Name="graphicdisplay" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Environment/>
+      <Project Name="lab3" ConfigName="Debug"/>
+      <Project Name="graphicdisplay" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>
