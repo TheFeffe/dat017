@@ -1,4 +1,6 @@
 #include <stdint.h>
+#ifndef SYS_DELAY_H
+#define SYS_DELAY_H
 
 #define SYS_TICK ((volatile SysTick*) 0xE000E010)
 
@@ -38,3 +40,4 @@ void delay_mikro( unsigned int us );
 ///				of the for loop.
 /// 			
 void delay_milli( unsigned int ms );
+#endif //SYS_DELAY_H

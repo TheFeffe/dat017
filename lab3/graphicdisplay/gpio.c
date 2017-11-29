@@ -268,26 +268,26 @@ void ascii_write_char(unsigned char c)
 	//delay_mikro(100000);
 }
 
-# Lab 3
+#define Lab 3
 
 /* välj grafik-display och ettställ de bitar som är 1 i x */
 void graphic_ctrl_bit_set( uint8_t x )
 {
 	uint8_t c;
-	c = *portOdrLow;
+	c = GPIO_E->odrLow;
 	c &= ~B_SELECT;
 	c |= (~B_SELECT & x);
-	*portOdrLow = c;
+	GPIO_E->odrLow = c;
 }
 
 /* välj grafik-display och nollställ de bitar som är 1 i x */
 void graphic_ctrl_bit_clear( uint8_t x )
 {
 	uint8_t c;
-	c = *portOdrLow;
+	c = GPIO_E->odrLow;
 	c &= ~B_SELECT;
 	c &= ~x;
-	*portOdrLow = c;
+	GPIO_E->odrLow = c;
 }
 
 /* konfigurera cs-signalerna */
@@ -314,7 +314,7 @@ void select_controller( uint8_t controller )
 void graphic_initialize(void)
 {
 	graphic_ctrl_bit_set(B_E);
-	delay_micro(10);
+	delay_mikro(10);
 	graphic_ctrl_bit_clear(B_CS1|B_CS2|B_RST|B_E);
 	delay_milli(30);
 	graphic_ctrl_bit_set(B_RST);
@@ -331,34 +331,34 @@ static void graphic_wait_ready(void)
 {
 	uint8_t c;
 	graphic_ctrl_bit_clear(B_E);
-	*portModer = 0x00005555; // 15-8 inputs, 7-0 outputs
+	GPIO_E->moder = 0x00005555; // 15-8 inputs, 7-0 outputs
 	graphic_ctrl_bit_clear(B_RS);
 	graphic_ctrl_bit_set(B_RW);
 	delay_500ns();
 	while(1) {
 	graphic_ctrl_bit_set(B_E);
 	delay_500ns();
-	c = *portIdrHigh & LCD_BUSY;
+	c = GPIO_E->idrHigh & LCD_BUSY;
 	graphic_ctrl_bit_clear(B_E);
 	delay_500ns();
 	if( c == 0 ) break;
 	}
-	*portModer = 0x55555555; // 15-0 outputs
+	GPIO_E->moder = 0x55555555; // 15-0 outputs
 }
 
 static uint8_t graphic_read(uint8_t controller)
 {
 	uint8_t c;
 	graphic_ctrl_bit_clear(B_E);
-	*portModer = 0x00005555; // 15-8 inputs, 7-0 outputs
+	GPIO_E->moder = 0x00005555; // 15-8 inputs, 7-0 outputs
 	graphic_ctrl_bit_set(B_RS|B_RW);
 	select_controller(controller);
 	delay_500ns();
 	graphic_ctrl_bit_set(B_E);
 	delay_500ns();
-	c = *portIdrHigh;
+	c = GPIO_E->idrHigh;
 	graphic_ctrl_bit_clear(B_E);
-	*portModer = 0x55555555; // 15-0 outputs
+	GPIO_E->moder = 0x55555555; // 15-0 outputs
 	if( controller & B_CS1 ) {
 		select_controller(B_CS1);
 		graphic_wait_ready();
@@ -378,7 +378,7 @@ static uint8_t graphic_read_data(uint8_t controller)
 
 static void graphic_write(uint8_t value, uint8_t controller)
 {
-	*portOdrHigh = value;
+	GPIO_E->odrHigh = value;
 	select_controller(controller);
 	delay_500ns();
 	graphic_ctrl_bit_set(B_E);
@@ -422,6 +422,8 @@ void graphic_clear_screen(void) {
 	}
 }
 
+uint8_t backBuffer[1024]; // 128 * 64 / 8
+
 void pixel(int x, int y) {
 	uint8_t mask;
 	int index = 0;
@@ -435,8 +437,6 @@ void pixel(int x, int y) {
 	backBuffer[index] |= mask;
 }
 
-uint8_t backBuffer[1024]; // 128 * 64 / 8
-
 void clear_backBuffer() {
 	int i;
 	for (i = 0; i < 1024; i++)
@@ -449,8 +449,8 @@ void graphic_draw_screen(void) {
 	for(c = 0; c < 2; c++) {
 		controller = (c == 0) ? B_CS1 : B_CS2;
 		for(j = 0; j < 8; j++) {
-			graphic_writeCommand(LCD_SET_PAGE | j, controller);
-			graphic_writeCommand(LCD_SET_ADD | 0, controller);
+			graphic_write_command(LCD_SET_PAGE | j, controller);
+			graphic_write_command(LCD_SET_ADD | 0, controller);
 			for(i = 0; i <= 63; i++, k++) {
 				graphic_write_data(backBuffer[k], controller);
 			}

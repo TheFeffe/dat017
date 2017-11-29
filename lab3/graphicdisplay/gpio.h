@@ -1,5 +1,6 @@
 #include <stdint.h>
-
+#ifndef GPIO_H
+#define GPIO_H
 // Define as pointers to registers as to pass
 // by reference easier.
 #define GPIO_D ((volatile GPIO*) 0x40020c00)
@@ -14,6 +15,13 @@
 #define B_RST 0x20
 #define B_CS2 0x10
 #define B_CS1 0x08
+
+#define LCD_ON 0x3F // Display on
+#define LCD_OFF 0x3E // Display off
+#define LCD_SET_ADD 0x40 // Set horizontal coordinate
+#define LCD_SET_PAGE 0xB8 // Set vertical coordinate
+#define LCD_DISP_START 0xC0 // Start address
+#define LCD_BUSY 0x80 // Read busy status
 
 
 /// Defines a GPIO on the MD407.
@@ -91,7 +99,7 @@ void ascii_gotoxy(int x, int y);
 void ascii_write_char(unsigned char c);
 
 
-# Lab 3
+#define Lab 3
 /* välj grafik-display och ettställ de bitar som är 1 i x */
 void graphic_ctrl_bit_set( uint8_t x );
 
@@ -114,3 +122,5 @@ static void graphic_write(uint8_t value, uint8_t controller);
 static void graphic_write_command(uint8_t command, uint8_t controller);
 
 static void graphic_write_data(uint8_t data, uint8_t controller);
+
+#endif GPIO_H
