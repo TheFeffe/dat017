@@ -1,4 +1,4 @@
-#include <stdint.h>
+﻿#include <stdint.h>
 #ifndef GPIO_H
 #define GPIO_H
 // Define as pointers to registers as to pass
@@ -123,4 +123,6 @@ static void graphic_write_command(uint8_t command, uint8_t controller);
 
 static void graphic_write_data(uint8_t data, uint8_t controller);
 
-#endif GPIO_H
+void pixel(int x, int y, int set);
+
+#endif

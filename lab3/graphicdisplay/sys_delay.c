@@ -1,4 +1,4 @@
-#include "sys_delay.h"
+﻿#include "sys_delay.h"
 
 /// Delays the thread 250 ns.
 ///
@@ -89,10 +89,10 @@ void delay_mikro( unsigned int us )
 /// 			
 void delay_milli( unsigned int ms )
 {
-#ifdef SIMULATOR
-	ms = ms / 1000;
-	ms++;
-#endif
+//#ifdef SIMULATOR
+	//ms = ms >> 10;
+ 	//ms++;
+//#endif
 	// Convert the given time to a number of 250 ns delays.
 	unsigned int delays = ms * 4000;
 	unsigned int i;

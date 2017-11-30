@@ -21,7 +21,12 @@ void startup ( void )
 #define TARGET_FPS 30
 
 void init_app(void){
-	
+	#ifdef USBDM
+		*((unsigned long *) 0x40023830) =0x18;
+		__asm volatile( " LDR R0,=0x08000209\n BLX R0\n");
+	#endif
+	setup_for_seg_disp(GPIO_D);
+	setup_for_ascii_display();
 }
 
 int main(int argc, char **argv)
@@ -29,10 +34,8 @@ int main(int argc, char **argv)
 	unsigned i;
 	init_app();
 	graphic_initialize();
-#ifndef SIMULATOR
 	graphic_clear_screen();
-#endif
-	while(1)
+	/*while(1)
 	{
 		clear_backBuffer();
 		
@@ -40,6 +43,19 @@ int main(int argc, char **argv)
 		
 		graphic_draw_screen();
 		delay_milli(40);
-	}
+	}*/
+	for( i = 0; i < 128; i++ )
+		pixel(i, 10, 1);
+	for( i = 0; i < 64; i++ )
+		pixel(10, i, 1);
+//	graphic_draw_screen();
+	delay_milli( 500 );
+	for( i = 0; i < 128; i++ )
+		pixel(i, 10, 0);
+	for( i = 0; i < 64; i++ )
+		pixel(10, i, 0);
+	//	graphic_draw_screen();
+		delay_milli(500);
+		graphic_clear_screen();
 }
 
