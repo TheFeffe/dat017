@@ -38,13 +38,14 @@ unsigned char keyb(void)
     unsigned char keys[] = { 1, 2, 3, 10, 4, 5, 6, 11, 7, 8, 9, 12, 14, 0, 15, 13 };
     unsigned char row, col;
     for(row = 0; row < 4; row++) {
-	deactivate_rows(GPIO_D);
-	activate_row(GPIO_D, row);
-	col = read_col(GPIO_D);
-	if(col != 0xFF) {
-	    return keys[4 * row + col];
-	}
+		deactivate_rows(GPIO_D);
+		activate_row(GPIO_D, row);
+		col = read_col(GPIO_D);
+		if(col != 0xFF) {
+			return keys[4 * row + col];
+		}
     }
+	//keyboardActivate(0);
     return 0xFF;
 }
 

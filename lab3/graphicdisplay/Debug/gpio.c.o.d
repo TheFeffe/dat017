@@ -1,5 +1,3 @@
-Debug/gpio.c.o: gpio.c gpio.h sys_delay.h
+Debug/gpio.c.o: gpio.c gpio.h
 
 gpio.h:
-
-sys_delay.h:
