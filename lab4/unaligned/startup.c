@@ -25,6 +25,11 @@ asm volatile(
 void init_app( void )
 {
 	/* Initiera port D */
+	*((unsigned long *) 0x40023830) =0x18;
+	__asm volatile( " LDR R0,=0x08000209\n BLX R0\n");
+	GPIO_D -> moder = 0x55005555;
+	GPIO_D -> otyper = 0x70;
+	GPIO_D -> pupdr = 0x00AA0000;
 	/* Initiera undantagsvektor */
 	*((void (**)(void) ) 0x2001C03C ) = systick_irq_handler;
 }
