@@ -14,6 +14,26 @@ asm volatile(
 
 #define EXTI_PR 0x40013C14
 #define IRQ GPIO_E+0x14
+#define SYSCFG_BASE ((volatile unsigned int *) 0x40013800)
+#define SYSCFG_EXTICR1 ((volatile unsigned int *) 0x40013808)
+#define EXIT_IMR ((volatile unsigned int *) 0x40013C00)
+#define EXTI_FTSR ((volatile unsigned int *) 0x40013C0C)
+#define EXTI_RTSR ((volatile unsigned int *) 0x40013C08)
+#define EXTI_PR ((volatile unsigned int *) 0x40013C14)
+#define EXTI_3_IRQVEC ((void (**)(void))0x2001C064)
+#define EXTI_2_IRQVEC ((void (**)(void))0x2001C060)
+#define EXTI_1_IRQVEC ((void (**)(void))0x2001C05C)
+#define EXTI_0_IRQVEC ((void (**)(void))0x2001C058)
+#define NVIC_ISERO ((volatile unsigned int *) 0xE000E100)
+#define NVIC_EXTI3_IRQ (1<<9)
+#define NVIC_EXTI2_IRQ (1<<8)
+#define NVIC_EXTI1_IRQ (1<<7)
+#define NVIC_EXTI0_IRQ (1<<6)
+#define EXTI3_IRQ 0x8;
+#define EXTI2_IRQ 0x4;
+#define EXTI1_IRQ 0x2;
+#define EXTI0_IRQ 0x1;
+
 
 int count = 0;
 
@@ -60,7 +80,7 @@ void app_init(void)
     GPIO_D->moder = 0x55555555;
 
   // Koppla PE3 tillavbrottslina EXTI3
-    #define SYSCFG_EXTICR1  0x40013808
+
     // Nollställ fält
     *((unsigned int *) SYSCFG_EXTICR1) &= ~0xF000;
     // PE3->EXTI3
