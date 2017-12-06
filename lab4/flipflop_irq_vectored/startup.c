@@ -74,6 +74,34 @@ void interrupt_handler(void)
   }
 }
 
+static volatile int count = 0;
+void irq0_handler(void){
+	count++;
+	*EXTI_PR |= EXTI0_IRQ //reset-signal till EXTI, om denna rad tas bort kallas irq_handler 2 gånger per interrupt
+	GPIO_E->odrLow |= 0x10; //reset-signal till interruptenheten
+	GPIO_E->odrLow &= ~0x10;
+}
+void irq1_handler(void){
+	count = 0;
+	*EXTI_PR |= EXTI1_IRQ; //reset-signal till EXTI, om denna rad tas bort kallas irq_handler 2 gånger per interrupt
+	GPIO_E->odrLow |= 0x20; //reset-signal till interruptenheten
+	GPIO_E->odrLow &= ~0x20;
+}
+void irq2_handler(void){
+
+	*EXTI_PR |= EXTI2_IRQ;
+	GPIO_E->odrLow |= 0x40;
+	GPIO_E->odrLow &= ~0x40;
+	if (GPIO_D->odrHigh == 0xFF){
+		GPIO_D->odrHigh = 0;
+	}
+	else{
+		GPIO_D->odrHigh = 0xFF;
+	}
+}
+
+
+
 void app_init(void)
 {
   // Sätt upp PD0-7 som utport för visningsenhet
@@ -95,15 +123,34 @@ void app_init(void)
     *((unsigned int *) 0x40013C08) &= ~8;
     // Open the gates
     GPIO_E -> moder = 0x1500;
+		//konfigurera avbrottshantering
+			*SYSCFG_EXTICR1 &= 0xF000;
+			*SYSCFG_EXTICR1 |= 0x0444;
+
+			*EXTI_IMR |= 7;
+			*EXTI_RTSR |= 7;
+			*EXTI_FTSR &= ~7;
+
+			*EXTI_0_IRQVEC = irq0_handler;
+			*EXTI_1_IRQVEC = irq1_handler;
+			*EXTI_2_IRQVEC = irq2_handler;
+
+			*NVIC_ISER0 |= NVIC_EXTI0_IRQ;
+			*NVIC_ISER0 |= NVIC_EXTI1_IRQ;
+			*NVIC_ISER0 |= NVIC_EXTI2_IRQ;
+			*NVIC_ISER0 |= NVIC_EXTI3_IRQ;
+
   // Sätt upp avbrottsvektor
   *((void (**)(void) ) 0x2001C064 ) = interrupt_handler;
 
   // Konfigurera de bitar i NVIC som kontrollerar den avbrottslina som EXTI3 kopplas till
-    *((unsigned int *) 0xE000E100) |= (1<<9);
+
 }
 
 void main(void)
 {
   app_init();
-
+	while(1){
+		GPIO_D -> odrLow = count;
+	}
 }
